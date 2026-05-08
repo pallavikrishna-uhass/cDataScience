@@ -9,7 +9,6 @@ A Bloom Filter is a space efficient storage system that helps determine whether 
 
 # Repository Structure 
 
-``text
 bloom-filter-project/
 │
 ├── bloomfilter/
@@ -37,6 +36,6 @@ bloom-filter-project/
 ├── README.md
 ├── requirements.txt
 └── environment.yml
-```
+
 
 Programs and Code used for Concepts of Data Science - Masters in Statistics and Data Science
