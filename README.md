@@ -9,6 +9,9 @@ A Bloom Filter is a space efficient storage system that helps determine whether 
 
 https://datamanagement.hms.harvard.edu/collect-analyze/documentation-metadata/readme-files 
 
+# Lecture 
+
+![Uploading image.png…]()
 
 # Repository Structure 
 Sample only to fill as the project proceeds
