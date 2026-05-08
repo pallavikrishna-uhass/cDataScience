@@ -7,18 +7,22 @@
 
 A Bloom Filter is a space efficient storage system that helps determine whether an object is present in the dataset
 
+https://datamanagement.hms.harvard.edu/collect-analyze/documentation-metadata/readme-files 
+
+
 # Repository Structure 
+Sample only to fill as the project proceeds
 
 bloom-filter-project/
 │
-├── bloomfilter/
-│   ├── __init__.py
-│   ├── bloom.py
-│   └── hashes.py
+├── bloomfilter/    #Explanation to add
+│   ├── __init__.py #Explanation to add
+│   ├── bloom.py    #Explanation to add
+│   └── hashes.py   #Explanation to add
 │
-├── tests/
-│   ├── test_bloom.py
-│   └── test_hashes.py
+├── tests/          #Explanation to add
+│   ├── test_bloom.py   #Explanation to add
+│   └── test_hashes.py  #Explanation to add
 │
 ├── benchmark/
 │   ├── benchmark.py
