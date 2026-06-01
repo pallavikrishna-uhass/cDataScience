@@ -1,0 +1,66 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Tests",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/pytest",
+            "group": "test",
+            "problemMatcher": [
+                "$python"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Run Linter",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/ruff",
+            "args": [
+                "check",
+                "src",
+                "tests",
+                "--fix"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$python"
+            ],
+        },
+        {
+            "label": "Format Code",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/black",
+            "args": [
+                "src",
+                "tests"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Type Check",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/mypy",
+            "args": [
+                "src"
+            ],
+            "group": "build",
+            "problemMatcher": [
+                "$python"
+            ]
+        },
+        {
+            "label": "Install Dependencies",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/pip",
+            "args": [
+                "install",
+                "-e",
+                ".[dev]"
+            ],
+            "group": "build"
+        }
+    ]
+}
