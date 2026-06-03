@@ -5,7 +5,7 @@ Bloom Filter Implementation.
 import math
 from typing import Any
 
-from .hashes import HashFunctionFamily
+from .hashes import HashFunctionFamily, HashFunctionFamily_01
 
 
 class BloomFilter:
@@ -114,3 +114,30 @@ class BloomFilter:
         self._bit_array = bytearray(self.bit_array_size // 8 + 1)
         self._added_elements.clear()
         self.count = 0
+
+
+class BloomFilter_01:
+
+    def __init__(self, size=10000, num_hashes=5):
+        self.size = size
+        self.num_hashes = num_hashes
+
+        self.bits = [0] * size
+
+        self.hasher = HashFunctionFamily_01(
+            num_hashes,
+            size
+        )
+
+    def add(self, item):
+
+        for idx in self.hasher.hash(item):
+            self.bits[idx] = 1
+
+    def contains(self, item):
+
+        for idx in self.hasher.hash(item):
+            if self.bits[idx] == 0:
+                return False
+
+        return True

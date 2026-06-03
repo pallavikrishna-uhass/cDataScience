@@ -5,7 +5,7 @@ Tests for the hash function family.
 
 import pytest
 
-from src.bloom_filter.hashes import HashFunctionFamily
+from src.bloom_filter.hashes import HashFunctionFamily, HashFunctionFamily_01
 
 
 class TestHashFunctionFamily:
@@ -116,3 +116,63 @@ class TestHashFunctionIndependence:
             indices = hasher.hash(data)
             assert len(indices) == 7, f"Failed for {name}"
             assert all(0 <= idx < 1000 for idx in indices), f"Failed for {name}"
+
+class TestHashFunctionFamily01:
+    """Tests for the HashFunctionFamily_01 class."""
+
+    def test_initialization_valid_parameters(self):
+        hasher = HashFunctionFamily_01(num_functions=7, size=1000)
+
+        assert hasher.num_functions == 7
+        assert hasher.size == 1000
+
+    def test_initialization_invalid_num_functions(self):
+        with pytest.raises(ValueError):
+            HashFunctionFamily_01(num_functions=0, size=1000)
+
+        with pytest.raises(ValueError):
+            HashFunctionFamily_01(num_functions=-1, size=1000)
+
+    def test_initialization_invalid_size(self):
+        with pytest.raises(ValueError):
+            HashFunctionFamily_01(num_functions=7, size=0)
+
+        with pytest.raises(ValueError):
+            HashFunctionFamily_01(num_functions=7, size=-10)
+
+    def test_hash_returns_correct_number_of_indices(self):
+        hasher = HashFunctionFamily_01(num_functions=5, size=1000)
+
+        indices = hasher.hash("apple")
+
+        assert len(indices) == 5
+
+    def test_hash_indices_within_range(self):
+        hasher = HashFunctionFamily_01(num_functions=10, size=500)
+
+        for item in [
+            "apple",
+            "banana",
+            "ATCGATCG",
+            "123456",
+            "random_string_xyz",
+        ]:
+            indices = hasher.hash(item)
+
+            assert all(0 <= idx < 500 for idx in indices)
+
+    def test_hash_deterministic(self):
+        hasher = HashFunctionFamily_01(num_functions=7, size=1000)
+
+        result1 = hasher.hash("apple")
+        result2 = hasher.hash("apple")
+
+        assert result1 == result2
+
+    def test_hash_changes_for_different_inputs(self):
+        hasher = HashFunctionFamily_01(num_functions=7, size=1000)
+
+        apple = hasher.hash("apple")
+        banana = hasher.hash("banana")
+
+        assert apple != banana

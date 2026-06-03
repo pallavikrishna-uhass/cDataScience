@@ -55,3 +55,23 @@ class HashFunctionFamily:
 
         combined_hash = (h1 + function_index * h2) % (2**64)
         return combined_hash % self.size
+
+class HashFunctionFamily_01:
+
+    def __init__(self, num_functions, size):
+        self.num_functions = num_functions
+        self.size = size
+
+        if num_functions < 1:
+            raise ValueError("num_functions must be at least 1")
+        if size < 1:
+            raise ValueError("size must be at least 1")
+
+    def hash(self, data):
+        indices = []
+
+        for i in range(self.num_functions):
+            h = hash(f"{i}-{data}")
+            indices.append(h % self.size)
+
+        return indices

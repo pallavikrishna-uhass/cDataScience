@@ -8,7 +8,7 @@ import string
 
 import pytest
 
-from src.bloom_filter.bloom import BloomFilter
+from src.bloom_filter.bloom import BloomFilter, BloomFilter_01
 
 
 class TestBloomFilterInitialization:
@@ -357,3 +357,239 @@ class TestBloomFilterEdgeCases:
         # Even with extreme parameters, should have at least 1 hash function
         bf = BloomFilter(capacity=1, error_rate=0.5)
         assert bf.num_hash_functions >= 1
+
+# Tests for BloomFilter_01
+
+
+class TestBloomFilter01Initialization:
+    """Tests for BloomFilter_01 initialization."""
+
+    def test_initialization_default_parameters(self) -> None:
+        """Test default constructor values."""
+        bf = BloomFilter_01()
+        assert bf.size == 10000
+        assert bf.num_hashes == 5
+
+    def test_initialization_custom_parameters(self) -> None:
+        """Test custom constructor values."""
+        bf = BloomFilter_01(size=5000, num_hashes=7)
+        assert bf.size == 5000
+        assert bf.num_hashes == 7
+
+    def test_bit_array_created(self) -> None:
+        """Test that bit array is initialized correctly."""
+        bf = BloomFilter_01(size=100)
+        assert len(bf.bits) == 100
+        assert all(bit == 0 for bit in bf.bits)
+
+
+class TestBloomFilter01BasicOperations:
+    """Tests for basic Bloom filter operations."""
+
+    def test_add_single_element(self) -> None:
+        """Test adding a single element."""
+        bf = BloomFilter_01()
+        bf.add("test")
+        assert bf.contains("test") is True
+
+    def test_add_multiple_elements(self) -> None:
+        """Test adding multiple elements."""
+        bf = BloomFilter_01()
+
+        items = ["apple", "banana", "cherry"]
+
+        for item in items:
+            bf.add(item)
+
+        for item in items:
+            assert bf.contains(item) is True
+
+    def test_contains_not_added_element(self) -> None:
+        """Test that non-added elements are typically not found."""
+        bf = BloomFilter_01(size=10000, num_hashes=5)
+
+        bf.add("apple")
+
+        assert bf.contains("orange") is False
+
+    def test_add_duplicate_element(self) -> None:
+        """Test adding the same element multiple times."""
+        bf = BloomFilter_01()
+
+        bf.add("test")
+        bf.add("test")
+        bf.add("test")
+
+        assert bf.contains("test") is True
+
+
+class TestBloomFilter01FalsePositives:
+    """Tests for Bloom filter correctness."""
+
+    def test_no_false_negatives(self) -> None:
+        """Test that added elements are always found."""
+        bf = BloomFilter_01(size=10000, num_hashes=5)
+
+        elements = [f"element_{i}" for i in range(500)]
+
+        for elem in elements:
+            bf.add(elem)
+
+        for elem in elements:
+            assert bf.contains(elem) is True, f"False negative for element: {elem}"
+
+    def test_false_positive_rate_reasonable(self) -> None:
+        """Test that false positive rate remains reasonable."""
+        bf = BloomFilter_01(size=10000, num_hashes=5)
+
+        for i in range(1000):
+            bf.add(f"element_{i}")
+
+        false_positives = 0
+
+        for i in range(1000):
+            if bf.contains(f"nonexistent_{i}"):
+                false_positives += 1
+
+        actual_rate = false_positives / 1000
+
+        # Simple implementation, so allow a higher threshold
+        assert actual_rate < 0.20
+
+
+class TestBloomFilter01Hashing:
+    """Tests related to hashing behavior."""
+
+    def test_hash_positions_are_set(self) -> None:
+        """Test that hash positions are set after insertion."""
+        bf = BloomFilter_01(size=1000, num_hashes=5)
+
+        bf.add("apple")
+
+        indices = bf.hasher.hash("apple")
+
+        for idx in indices:
+            assert bf.bits[idx] == 1
+
+    def test_multiple_elements_set_bits(self) -> None:
+        """Test that inserting multiple elements updates bit array."""
+        bf = BloomFilter_01(size=1000, num_hashes=5)
+
+        bf.add("apple")
+        bf.add("banana")
+
+        apple_indices = bf.hasher.hash("apple")
+        banana_indices = bf.hasher.hash("banana")
+
+        for idx in apple_indices:
+            assert bf.bits[idx] == 1
+
+        for idx in banana_indices:
+            assert bf.bits[idx] == 1
+
+
+class TestBloomFilter01WithDataTypes:
+    """Tests with different data types."""
+
+    def test_natural_language_words(self) -> None:
+        """Test with natural language words."""
+        bf = BloomFilter_01()
+
+        words = [
+            "the",
+            "be",
+            "to",
+            "of",
+            "and",
+            "computer",
+            "science",
+            "algorithm",
+        ]
+
+        for word in words:
+            bf.add(word)
+
+        for word in words:
+            assert bf.contains(word), f"Word not found: {word}"
+
+    def test_random_strings(self) -> None:
+        """Test with random alphanumeric strings."""
+        bf = BloomFilter_01()
+
+        random.seed(42)
+
+        strings = [
+            "".join(random.choices(string.ascii_letters + string.digits, k=20))
+            for _ in range(100)
+        ]
+
+        for s in strings:
+            bf.add(s)
+
+        for s in strings:
+            assert bf.contains(s), f"String not found: {s}"
+
+    def test_dna_sequences(self) -> None:
+        """Test with DNA sequences."""
+        bf = BloomFilter_01()
+
+        random.seed(42)
+        bases = ["A", "C", "G", "T"]
+
+        sequences = ["".join(random.choices(bases, k=100)) for _ in range(100)]
+
+        for seq in sequences:
+            bf.add(seq)
+
+        for seq in sequences:
+            assert bf.contains(seq), f"Sequence not found: {seq}"
+
+    def test_numeric_strings(self) -> None:
+        """Test with numeric strings."""
+        bf = BloomFilter_01()
+
+        for i in range(100):
+            bf.add(str(i))
+
+        for i in range(100):
+            assert bf.contains(str(i)), f"Number not found: {i}"
+
+
+class TestBloomFilter01EdgeCases:
+    """Tests for edge cases."""
+
+    def test_empty_string(self) -> None:
+        """Test with empty string."""
+        bf = BloomFilter_01()
+
+        bf.add("")
+
+        assert bf.contains("")
+
+    def test_very_long_string(self) -> None:
+        """Test with very long string."""
+        bf = BloomFilter_01()
+
+        long_string = "a" * 100000
+
+        bf.add(long_string)
+
+        assert bf.contains(long_string)
+
+    def test_unicode_characters(self) -> None:
+        """Test with Unicode characters."""
+        bf = BloomFilter_01()
+
+        unicode_strings = [
+            "你好",
+            "こんにちは",
+            "Привет",
+            "مرحبا",
+            "🎉🎊",
+        ]
+
+        for s in unicode_strings:
+            bf.add(s)
+
+        for s in unicode_strings:
+            assert bf.contains(s), f"Unicode string not found: {s}"
