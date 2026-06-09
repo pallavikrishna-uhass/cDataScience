@@ -13,3 +13,8 @@ class BaseFilter:
     def contains(self, item: Any) -> bool:
         """Check if item might be in the filter"""
         raise NotImplementedError
+
+    def __contains__(self, item: Any) -> bool:
+        if not isinstance(item, str):
+            item = str(item)
+        return self.contains(item)

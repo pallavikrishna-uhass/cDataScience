@@ -80,11 +80,6 @@ class BloomFilter(BaseFilter):
 
         return True
 
-    def __contains__(self, item: Any) -> bool:
-        if not isinstance(item, str):
-            item = str(item)
-        return self.contains(item)
-
     def __len__(self) -> int:
         return self.count
 
