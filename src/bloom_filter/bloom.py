@@ -5,10 +5,11 @@ Bloom Filter Implementation.
 import math
 from typing import Any
 
+from .base import BaseFilter
 from .hashes import HashFunctionFamily, HashFunctionFamily_01
 
 
-class BloomFilter:
+class BloomFilter(BaseFilter):
 
     def __init__(self, capacity: int, error_rate: float = 0.01, seed: int = 42) -> None:
 
@@ -116,7 +117,7 @@ class BloomFilter:
         self.count = 0
 
 
-class BloomFilter_01:
+class BloomFilter_01(BaseFilter):
 
     def __init__(self, size=10000, num_hashes=5):
         self.size = size
@@ -124,10 +125,7 @@ class BloomFilter_01:
 
         self.bits = [0] * size
 
-        self.hasher = HashFunctionFamily_01(
-            num_hashes,
-            size
-        )
+        self.hasher = HashFunctionFamily_01(num_hashes, size)
 
     def add(self, item):
 
