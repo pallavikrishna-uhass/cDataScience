@@ -8,7 +8,7 @@ import string
 
 import pytest
 
-from src.bloom_filter.bloom import BloomFilter, BloomFilter_01
+from src.bloom_filter.bloom import BloomFilter, BloomFilter_01, BloomFilter_02
 
 
 class TestBloomFilterInitialization:
@@ -358,6 +358,7 @@ class TestBloomFilterEdgeCases:
         bf = BloomFilter(capacity=1, error_rate=0.5)
         assert bf.num_hash_functions >= 1
 
+
 # Tests for BloomFilter_01
 
 
@@ -593,3 +594,111 @@ class TestBloomFilter01EdgeCases:
 
         for s in unicode_strings:
             assert bf.contains(s), f"Unicode string not found: {s}"
+
+
+class TestBloomFilter02:
+    """Tests for BloomFilter_02."""
+
+    def test_initialization(self) -> None:
+        bf = BloomFilter_02(capacity=1000, error_rate=0.01)
+
+        assert bf.capacity == 1000
+        assert bf.error_rate == 0.01
+        assert bf.count == 0
+
+    def test_add_single_element(self) -> None:
+        bf = BloomFilter_02(capacity=100)
+
+        bf.add("test")
+
+        assert bf.contains("test")
+        assert bf.count == 1
+
+    def test_contains_added_elements(self) -> None:
+        bf = BloomFilter_02(capacity=100)
+
+        words = ["apple", "banana", "cherry"]
+
+        for word in words:
+            bf.add(word)
+
+        for word in words:
+            assert word in bf
+
+    def test_no_false_negatives(self) -> None:
+        bf = BloomFilter_02(capacity=1000)
+
+        elements = [f"item_{i}" for i in range(100)]
+
+        for elem in elements:
+            bf.add(elem)
+
+        for elem in elements:
+            assert elem in bf
+
+    def test_clear(self) -> None:
+        bf = BloomFilter_02(capacity=100)
+
+        bf.add("apple")
+        bf.add("banana")
+
+        bf.clear()
+
+        assert bf.count == 0
+        assert "apple" not in bf
+        assert "banana" not in bf
+
+    def test_duplicate_inserts_increase_count(self) -> None:
+        """
+        BloomFilter_02 does not track duplicates.
+        """
+
+        bf = BloomFilter_02(capacity=100)
+
+        bf.add("test")
+        bf.add("test")
+        bf.add("test")
+
+        assert bf.count == 3
+
+    def test_memory_size_positive(self) -> None:
+        bf = BloomFilter_02(capacity=1000)
+
+        assert bf.memory_size_bytes > 0
+
+    def test_fill_ratio_increases(self) -> None:
+        bf = BloomFilter_02(capacity=1000)
+
+        initial_ratio = bf.fill_ratio
+
+        for i in range(100):
+            bf.add(f"item_{i}")
+
+        assert bf.fill_ratio > initial_ratio
+
+    def test_false_positive_rate_reasonable(self) -> None:
+        bf = BloomFilter_02(
+            capacity=1000,
+            error_rate=0.01,
+        )
+
+        for i in range(1000):
+            bf.add(f"member_{i}")
+
+        false_positives = 0
+
+        for i in range(1000):
+            if bf.contains(f"nonmember_{i}"):
+                false_positives += 1
+
+        fp_rate = false_positives / 1000
+
+        assert fp_rate < 0.05
+
+    def test_repr(self) -> None:
+        bf = BloomFilter_02(capacity=1000)
+
+        repr_str = repr(bf)
+
+        assert "BloomFilter_02" in repr_str
+        assert "capacity=1000" in repr_str

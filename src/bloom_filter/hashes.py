@@ -57,6 +57,21 @@ class HashFunctionFamily:
         return combined_hash % self.size
 
 class HashFunctionFamily_01:
+    """
+    Simplified custom hash family.
+
+    Generates multiple hash values using basic arithmetic
+    and string processing operations.
+
+    Characteristics:
+    - easy to understand
+    - fast computation
+    - suitable for educational purposes
+
+    Trade-off:
+    - weaker distribution quality
+    - higher collision probability
+    """
 
     def __init__(self, num_functions, size):
         self.num_functions = num_functions
@@ -75,3 +90,70 @@ class HashFunctionFamily_01:
             indices.append(h % self.size)
 
         return indices
+    
+class HashFunctionFamily_02:
+    """
+    Lightweight performance-oriented hash family.
+
+    Uses Python's built-in hashing combined with simple
+    rehashing techniques to generate multiple indices.
+
+    Characteristics:
+    - fast execution
+    - low computational overhead
+    - suitable for benchmarking
+
+    Trade-off:
+    - lower distribution quality than SHA256
+    - increased false-positive rates at high load factors
+    """
+
+    def __init__(
+        self,
+        num_functions: int,
+        size: int,
+        seed: int = 42,
+    ) -> None:
+
+        if num_functions < 1:
+            raise ValueError(
+                "num_functions must be at least 1"
+            )
+
+        if size < 1:
+            raise ValueError(
+                "size must be at least 1"
+            )
+
+        self.num_functions = num_functions
+        self.size = size
+        self.seed = seed
+
+    def hash(self, data: str) -> list[int]:
+
+        h1 = hash((data, self.seed))
+        h2 = hash((data, self.seed + 1))
+
+        return [
+            (h1 + i * h2) % self.size
+            for i in range(self.num_functions)
+        ]
+
+    def hash_single(
+        self,
+        data: str,
+        function_index: int,
+    ) -> int:
+
+        if not 0 <= function_index < self.num_functions:
+            raise ValueError(
+                f"function_index must be in range "
+                f"[0, {self.num_functions})"
+            )
+
+        h1 = hash((data, self.seed))
+        h2 = hash((data, self.seed + 1))
+
+        return (
+            h1 + function_index * h2
+        ) % self.size

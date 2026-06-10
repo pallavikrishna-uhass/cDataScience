@@ -17,7 +17,7 @@ from typing import Optional
 
 sys.path.insert(0, ".")
 
-from src.bloom_filter import BaseFilter, BloomFilter, BloomFilter_01
+from src.bloom_filter import BaseFilter, BloomFilter, BloomFilter_01, BloomFilter_02
 
 
 @dataclass
@@ -96,8 +96,12 @@ def main() -> int:
 
     # Filter instances - sonfigure arguments here!
     filters = [
+        # Optimized SHA256 implementation
         BloomFilter(capacity=10000, error_rate=0.01),
+        # Simple educational implementation
         BloomFilter_01(size=10000, num_hashes=7),
+        # Fast lightweight implementation
+        BloomFilter_02(capacity=10000, error_rate=0.01),
     ]
 
     print("=" * 70)

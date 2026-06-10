@@ -6,10 +6,29 @@ import math
 from typing import Any
 
 from .base import BaseFilter
-from .hashes import HashFunctionFamily, HashFunctionFamily_01
+from .hashes import HashFunctionFamily, HashFunctionFamily_01, HashFunctionFamily_02
 
 
 class BloomFilter(BaseFilter):
+    """
+    Primary Bloom filter implementation.
+
+    Uses:
+    - automatic bit-array sizing
+    - automatic hash-count calculation
+    - SHA256-based double hashing
+    - bytearray storage
+    - exact element tracking
+    - false-positive rate estimation
+
+    Focus:
+    - accuracy
+    - theoretical correctness
+    - memory efficiency
+
+    Trade-off:
+    - slower hashing due to cryptographic hash functions
+    """
 
     def __init__(self, capacity: int, error_rate: float = 0.01, seed: int = 42) -> None:
 
@@ -113,6 +132,29 @@ class BloomFilter(BaseFilter):
 
 
 class BloomFilter_01(BaseFilter):
+    """
+    Simplified Bloom filter implementation.
+
+    Uses:
+    - fixed-size bit array
+    - Python list storage
+    - fixed number of hash functions
+    - lightweight custom hash family
+
+    Focus:
+    - simplicity
+    - readability
+    - educational comparison
+
+    Does NOT:
+    - optimise memory usage
+    - automatically size the filter
+    - estimate false-positive rates
+    - track inserted elements
+
+    Trade-off:
+    - faster execution but reduced accuracy under heavy load
+    """
 
     def __init__(self, size=10000, num_hashes=5):
         self.size = size
@@ -134,3 +176,73 @@ class BloomFilter_01(BaseFilter):
                 return False
 
         return True
+
+
+from .hashes import HashFunctionFamily_02
+
+
+class BloomFilter_02(BloomFilter):
+    """
+    Performance-oriented Bloom filter variant.
+
+    Uses:
+    - automatic sizing
+    - bytearray storage
+    - optimal hash-count calculation
+    - lightweight hash family
+
+    Focus:
+    - faster execution
+    - reduced hashing overhead
+    - lower memory usage
+
+    Does NOT:
+    - track inserted elements
+
+    Trade-off:
+    - improved speed with slightly reduced hash quality
+    """
+
+    def __init__(
+        self,
+        capacity: int,
+        error_rate: float = 0.01,
+        seed: int = 42,
+    ) -> None:
+
+        super().__init__(capacity, error_rate, seed)
+
+        # Replace SHA256 hasher with lightweight hasher
+        self._hasher = HashFunctionFamily_02(
+            num_functions=self.num_hash_functions,
+            size=self.bit_array_size,
+            seed=seed,
+        )
+
+        # No exact membership tracking
+        self._added_elements = None
+
+    def add(self, item: str) -> None:
+
+        for idx in self._hasher.hash(item):
+            byte_index = idx // 8
+            bit_index = idx % 8
+
+            self._bit_array[byte_index] |= 1 << bit_index
+
+        self.count += 1
+
+    def clear(self) -> None:
+
+        self._bit_array = bytearray(self.bit_array_size // 8 + 1)
+
+        self.count = 0
+
+    def __repr__(self) -> str:
+
+        return (
+            f"BloomFilter_02("
+            f"capacity={self.capacity}, "
+            f"error_rate={self.error_rate}, "
+            f"count={self.count})"
+        )
