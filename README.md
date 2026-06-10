@@ -1,33 +1,43 @@
 # Bloom Filter Implementation in Python
 ## Team Members
 
-- Pallavi Krishna
+- Mikita Bisliuk (Add student number)
+- Pallavi Krishna (2469603)
+
 
 # This project implements a Bloom Filter in Python 
 
-A Bloom Filter is a space efficient storage system that helps determine whether an object is present in the dataset
+This project was developed for the Concepts of Data Science (2025–2026) course.
+
+The goal of the project is to implement, test, and evaluate a Bloom Filter data structure in Python. 
+A Bloom Filter is a probabilistic data structure that provides highly memory-efficient membership testing.
+
+Bloom Filters can determine:
+
+whether an element is definitely not present
+whether an element is probably present
+
+Bloom Filters may produce false positives but never false negatives.
 
 https://datamanagement.hms.harvard.edu/collect-analyze/documentation-metadata/readme-files 
 
-# Lecture 
-
-![Uploading image.png…]()
-
 # Repository Structure 
-Sample only to fill as the project proceeds
 
-bloom-filter-project/
+```text
+cDataScience/
 │
-├── bloomfilter/    #Explanation to add
-│   ├── __init__.py #Explanation to add
-│   ├── bloom.py    #Explanation to add
-│   └── hashes.py   #Explanation to add
+├── src/
+│   └── bloom_filter/
+│       ├── __init__.py
+│       ├── base.py
+│       ├── bloom.py
+│       └── hashes.py
 │
-├── tests/          #Explanation to add
-│   ├── test_bloom.py   #Explanation to add
-│   └── test_hashes.py  #Explanation to add
+├── tests/
+│   ├── test_bloom.py
+│   └── test_hashes.py
 │
-├── benchmark/
+├── benchmarks/
 │   ├── benchmark.py
 │   ├── false_positive.py
 │   ├── compression.py
@@ -38,11 +48,10 @@ bloom-filter-project/
 │
 ├── plots/
 │
-├── data/
-│
 ├── README.md
 ├── requirements.txt
 └── environment.yml
+```
 
 ---
 
@@ -73,16 +82,109 @@ Results:
 
 # Features
 
-- Object-oriented Bloom Filter implementation
-- Multiple hash functions using MurmurHash
-- Unit testing with pytest
-- False positive rate analysis
-- Compression ratio analysis
-- Performance benchmarking
-- HPC-compatible benchmark scripts
-- Plot generation using matplotlib
+# Implementations
+
+Three Bloom Filter implementations were developed and compared.
+
+## BloomFilter
+
+The primary implementation.
+
+### Features
+
+- Object-oriented design
+- Automatic calculation of optimal bit-array size
+- Automatic calculation of optimal number of hash functions
+- SHA256-based hash family
+- Bytearray-based storage
+- Estimated false-positive rate calculation
+- Memory usage tracking
+
+### Focus
+
+- Accuracy
+- Reliability
+- Theoretical correctness
 
 ---
+
+## BloomFilter_01
+
+A simplified educational implementation.
+
+### Features
+
+- Fixed-size bit array implemented as a Python list
+- Simplified hash family
+- Fixed number of hash functions
+
+### Focus
+
+- Simplicity
+- Readability
+- Educational comparison baseline
+
+---
+
+## BloomFilter_02
+
+A performance-oriented implementation.
+
+### Features
+
+- Inherits from `BloomFilter`
+- Bytearray storage
+- Automatic sizing
+- Lightweight hash family
+- Reduced hashing overhead
+
+### Focus
+
+- Faster execution
+- Reduced computational cost
+
+---
+
+# Hash Function Families
+
+The project includes multiple hash-family implementations.
+
+## HashFunctionFamily
+
+Uses SHA256 hashing and double hashing to generate multiple independent hash functions.
+
+### Characteristics
+
+- High-quality distribution
+- Deterministic output
+- Strong resistance to collisions
+
+---
+
+## HashFunctionFamily_01
+
+Simplified custom hash implementation.
+
+### Characteristics
+
+- Faster computation
+- Less uniform distribution
+- Higher false-positive rates under heavy load
+
+---
+
+## HashFunctionFamily_03
+
+Performance-oriented implementation based on Python's built-in hashing.
+
+### Characteristics
+
+- Reduced computational overhead
+- Faster execution
+- Slightly reduced accuracy compared to SHA256
+
+---
+
 
 # Installation
 
@@ -90,10 +192,8 @@ Results:
 
 ```bash
 git clone <repository-url>
-cd bloom-filter-project
+cd cDataScience
 ```
-
----
 
 ## Create Conda Environment
 
@@ -102,8 +202,6 @@ conda create -n bloom python=3.11
 conda activate bloom
 ```
 
----
-
 ## Install Dependencies
 
 ```bash
@@ -111,7 +209,6 @@ pip install -r requirements.txt
 ```
 
 ---
-
 # Dependencies
 
 Main packages used:
@@ -124,12 +221,13 @@ Main packages used:
 
 # Usage
 
-## Example
-
 ```python
-from bloomfilter.bloom import BloomFilter
+from src.bloom_filter import BloomFilter
 
-bf = BloomFilter(size=10000, num_hashes=3)
+bf = BloomFilter(
+    capacity=10000,
+    error_rate=0.01,
+)
 
 bf.add("apple")
 
@@ -144,11 +242,12 @@ True
 False
 ```
 
+
 ---
 
 # Running Tests
 
-The project uses pytest for testing.
+The project uses `pytest`.
 
 Run all tests:
 
@@ -156,34 +255,104 @@ Run all tests:
 pytest
 ```
 
+Run Bloom Filter tests only:
+
+```bash
+pytest tests/test_bloom.py
+```
+
+Run hash-function tests only:
+
+```bash
+pytest tests/test_hashes.py
+```
+
+Run tests with coverage:
+
+```bash
+pytest --cov=src --cov-report=term-missing
+```
+
 ---
 
 # Hash Function Testing
 
-The hash functions were tested using:
-1. Natural language words
-2. Randomly generated strings
+The hash functions were evaluated using:
 
-The tests evaluate:
-- consistency
-- distribution quality
-- collision behaviour
+- Natural language words
+- Random strings
+- DNA sequences
+- Numeric strings
+- Unicode strings
+
+The tests verify:
+
+- Deterministic behaviour
+- Valid index generation
+- Distribution quality
+- Collision resistance
+- Consistency across data types
 
 ---
 
 # Performance Benchmarking
 
-Benchmarks were performed for increasing dataset sizes:
-- 1,000 words
-- 10,000 words
-- 100,000 words
-- 1,000,000 words
+Performance benchmarks compare all Bloom Filter implementations.
 
-The following metrics were measured:
-- insertion time
-- lookup time
+Metrics measured:
+
+- Insert throughput
+- Membership-query throughput
+- False-positive rate
+
+Benchmark command:
+
+```bash
+python3 benchmarks/benchmark.py --samples 10000
+```
+
+---
+
+# Preliminary Benchmark Results
+
+## 1,000 Elements
+
+| Implementation | Operations/sec | False Positive Rate |
+|----------------|---------------:|--------------------:|
+| BloomFilter | 110,496 | 0.0000 |
+| BloomFilter_01 | 275,378 | 0.0070 |
+| BloomFilter_02 | 262,402 | 0.0040 |
+
+## 10,000 Elements
+
+| Implementation | Operations/sec | False Positive Rate |
+|----------------|---------------:|--------------------:|
+| BloomFilter | 112,216 | 0.0106 |
+| BloomFilter_01 | 288,601 | 0.9900 |
+| BloomFilter_02 | 267,709 | 0.0324 |
+
+## 100,000 Elements
+
+| Implementation | Operations/sec | False Positive Rate |
+|----------------|---------------:|--------------------:|
+| BloomFilter | 113,345 | 0.9946 |
+| BloomFilter_01 | 287,878 | 1.0000 |
+| BloomFilter_02 | 268,631 | 0.9956 |
+
 
 Plots are available in the `plots/` directory.
+
+### Discussion
+
+
+The results demonstrate the trade-off between speed and accuracy.
+
+- **BloomFilter** provides the lowest false-positive rates when operating within its design capacity but is slower due to SHA256 hashing.
+- **BloomFilter_01** achieves the highest throughput but rapidly loses accuracy once the filter becomes saturated.
+- **BloomFilter_02** offers a compromise between performance and accuracy by using a lighter-weight hashing strategy.
+
+All implementations exhibit substantially increased false-positive rates when the number of inserted elements greatly exceeds the filter's configured capacity (10,000 elements), illustrating a fundamental limitation of Bloom Filters.
+
 
 ---
 
@@ -254,11 +423,18 @@ Where:
 
 # Results Summary
 
-Key findings:
-- Bloom Filters provide extremely fast membership checks
-- Memory usage is significantly lower than storing raw data
-- False positive rates increase with filter saturation
-- Proper selection of filter size and hash count is critical
+# Conclusions
+
+The project demonstrates that Bloom Filters provide:
+
+- Efficient memory usage
+- Fast membership testing
+- Configurable accuracy-performance trade-offs
+
+The experiments show that implementation choices, hash-function design, and filter capacity significantly influence performance and false-positive behaviour.
+
+The benchmarking results also highlight that Bloom Filters must be configured appropriately for the expected dataset size; otherwise, false-positive rates increase dramatically as the filter becomes saturated.
+
 
 ---
 
