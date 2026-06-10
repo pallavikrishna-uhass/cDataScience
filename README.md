@@ -1,17 +1,15 @@
 # Bloom Filter Implementation in Python
 ## Team Members
 
-- Pallavi Krishna
+- Mikita Bisliuk (Add student number)
+- Pallavi Krishna (2469603)
+
 
 # This project implements a Bloom Filter in Python 
 
 A Bloom Filter is a space efficient storage system that helps determine whether an object is present in the dataset
 
 https://datamanagement.hms.harvard.edu/collect-analyze/documentation-metadata/readme-files 
-
-# Lecture 
-
-![Uploading image.png…]()
 
 # Repository Structure 
 Sample only to fill as the project proceeds
