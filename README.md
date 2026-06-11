@@ -362,13 +362,13 @@ Benchmarking experiments were performed on HPC infrastructure.
 
 Included files:
 - `benchmark.py`
-- `job.slurm`
-- benchmark output logs
+- `run_benchmark.sh`
+- benchmark output log
 
 ## Running on HPC
 
 ```bash
-sbatch job.slurm
+sbatch run_benchmark.sh
 ```
 
 ---
