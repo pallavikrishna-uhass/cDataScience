@@ -1,0 +1,43 @@
+SLURM_JOB_ID: 10079516
+SLURM_JOB_USER: vsc38896
+SLURM_JOB_ACCOUNT: lp_mindwell_pilot
+SLURM_JOB_NAME: run_benchmark.sh
+SLURM_CLUSTER_NAME: mindwell
+SLURM_JOB_PARTITION: batch_graniterapids
+SLURM_NNODES: 1
+SLURM_NODELIST: m11c05n2
+SLURM_JOB_CPUS_PER_NODE: 1
+Date: Thu Jun 11 18:14:38 CEST 2026
+Walltime: 00-00:05:00
+========================================================================
+Starting benchmark...
+Thu Jun 11 18:14:38 CEST 2026
+======================================================================
+Bloom Filter Benchmark - Implementation Comparison
+======================================================================
+Samples: 1,000
+
+Implementation            Ops/sec    FP rate   Status
+BloomFilter               212,848     0.0000
+BloomFilter_01            490,270     0.0110
+BloomFilter_02            378,095     0.0020
+======================================================================
+Bloom Filter Benchmark - Implementation Comparison
+======================================================================
+Samples: 10,000
+
+Implementation            Ops/sec    FP rate   Status
+BloomFilter               210,782     0.0102
+BloomFilter_01            503,429     0.9872
+BloomFilter_02            386,325     0.0297
+======================================================================
+Bloom Filter Benchmark - Implementation Comparison
+======================================================================
+Samples: 100,000
+
+Implementation            Ops/sec    FP rate   Status
+BloomFilter               210,346     0.9948
+BloomFilter_01            516,398     1.0000
+BloomFilter_02            378,541     0.9960
+Finished
+Thu Jun 11 18:14:44 CEST 2026
