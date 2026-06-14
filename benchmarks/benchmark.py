@@ -4,7 +4,7 @@ Bloom Filter Benchmarking Script
 Compares all Bloom filter implementations for performance and accuracy.
 
 Usage:
-    python benchamrks/benchmark.py [--samples N]
+    python benchmarks/benchmark.py [--samples N]
 """
 
 import argparse
@@ -129,7 +129,7 @@ def main() -> int:
             )
 
     if args.output:
-        with open(args.ouput, "w") as f:
+        with open(args.output, "w") as f:
             import json
 
             json.dump({"results": all_results}, f, indent=4)

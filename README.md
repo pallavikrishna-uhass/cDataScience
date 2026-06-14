@@ -1,7 +1,7 @@
 # Bloom Filter Implementation in Python
 ## Team Members
 
-- Mikita Bisliuk (Add student number)
+- Mikita Bisliuk (2364811)
 - Pallavi Krishna (2469603)
 
 
