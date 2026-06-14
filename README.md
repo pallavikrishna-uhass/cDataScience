@@ -1,4 +1,5 @@
 # Bloom Filter Implementation in Python
+
 ## Team Members
 
 - Mikita Bisliuk (2364811)
@@ -19,7 +20,7 @@ whether an element is probably present
 
 Bloom Filters may produce false positives but never false negatives.
 
-https://datamanagement.hms.harvard.edu/collect-analyze/documentation-metadata/readme-files 
+---
 
 # Repository Structure 
 
@@ -39,18 +40,20 @@ cDataScience/
 │
 ├── benchmarks/
 │   ├── benchmark.py
-│   ├── false_positive.py
-│   ├── compression.py
-│   └── job.slurm
+│   └── run_benchmark.sh
 │
 ├── notebooks/
-│   └── demo.ipynb
+│   ├── false_positive_analysis.ipynb
+│   └── compression_analysis.ipynb
 │
 ├── plots/
+│   └── *.png
 │
+├── .vscode/
 ├── README.md
 ├── requirements.txt
-└── environment.yml
+├── environment.yml
+└── pyproject.toml
 ```
 
 ---
@@ -173,7 +176,7 @@ Simplified custom hash implementation.
 
 ---
 
-## HashFunctionFamily_03
+## HashFunctionFamily_02
 
 Performance-oriented implementation based on Python's built-in hashing.
 
@@ -379,9 +382,12 @@ The project evaluates how the false positive rate changes:
 - as more items are inserted
 - when the Bloom Filter exceeds its designed capacity
 
+Interactive analysis available in `notebooks/false_positive_analysis.ipynb`.
+
 Results demonstrate that:
 - false positive rate increases as the filter fills
 - overloading the filter significantly reduces accuracy
+- at 500% capacity, FP rate reaches ~83% (filter becomes nearly useless)
 
 ---
 
@@ -391,9 +397,12 @@ The Bloom Filter memory usage was compared against:
 - Python sets
 - direct storage of strings
 
+Interactive analysis available in `notebooks/compression_analysis.ipynb`.
+
 The analysis demonstrates:
-- significant memory savings
-- trade-offs between accuracy and storage efficiency
+- Bloom filters use only ~1.56% of memory compared to direct string storage
+- trade-offs between accuracy (lower FP rate) and storage efficiency
+- measured FP rates closely match target rates when properly configured
 
 ---
 
@@ -421,8 +430,6 @@ Where:
 
 ---
 
-# Results Summary
-
 # Conclusions
 
 The project demonstrates that Bloom Filters provide:
@@ -434,7 +441,6 @@ The project demonstrates that Bloom Filters provide:
 The experiments show that implementation choices, hash-function design, and filter capacity significantly influence performance and false-positive behaviour.
 
 The benchmarking results also highlight that Bloom Filters must be configured appropriately for the expected dataset size; otherwise, false-positive rates increase dramatically as the filter becomes saturated.
-
 
 ---
 
